@@ -1,0 +1,3223 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Zovix POS — نظام نقاط بيع ذكي لمحلات الملابس والتجزئة. باقة تجربة مجانية، بيزك أوفلاين، وبرو أونلاين مع Zovi AI.">
+    <meta name="keywords" content="نقاط بيع, برنامج كاشير, POS, إدارة مخزون, زوفيكس, محلات ملابس, سوبر ماركت, برنامج محاسبة">
+    <meta name="author" content="Zovix">
+    <meta name="theme-color" content="#06060A">
+    <title>Zovix POS</title>
+    <link rel="icon" type="image/png" href="540.png">
+    <link rel="apple-touch-icon" href="540.png">
+
+    <meta property="og:title" content="Zovix POS">
+    <meta property="og:description" content="أول نظام نقاط بيع متكامل يعمل بدون إنترنت مع ذكاء اصطناعي Zovi AI. سعر إطلاق محدود!">
+    <meta property="og:image" content="1024.png">
+    <meta property="og:type" content="website">
+
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        /* ═══════════════════════════════════════════════════════
+           DESIGN SYSTEM & VARIABLES
+        ═══════════════════════════════════════════════════════ */
+        :root {
+            --primary: #613C9E;
+            --primary-light: #7B52B8;
+            --primary-dark: #4A2D78;
+            --accent: #C53E8F;
+            --accent-light: #D95BA0;
+            --highlight: #F0575B;
+            --highlight-light: #F47275;
+
+            --bg-body: #06060A;
+            --bg-dark: #0A0A0F;
+            --bg-card: #0F0F18;
+            --bg-card-elevated: #141420;
+            --bg-card-hover: #1A1A28;
+            --bg-glass: rgba(15, 15, 24, 0.65);
+
+            --text-primary: #F2F2F7;
+            --text-secondary: #A0A0B0;
+            --text-muted: #5A5A6E;
+
+            --success: #34C759;
+            --warning: #FF9F0A;
+            --gold: #FFD700;
+
+            --gradient: linear-gradient(135deg, var(--primary), var(--accent), var(--highlight));
+            --gradient-subtle: linear-gradient(135deg, rgba(97,60,158,0.15), rgba(197,62,143,0.15), rgba(240,87,91,0.15));
+            --gradient-glow: linear-gradient(135deg, rgba(97,60,158,0.4), rgba(197,62,143,0.4));
+
+            --radius-sm: 12px;
+            --radius-md: 18px;
+            --radius-lg: 24px;
+            --radius-xl: 32px;
+            --radius-full: 50px;
+
+            --shadow-sm: 0 4px 12px rgba(0,0,0,0.3);
+            --shadow-md: 0 8px 32px rgba(0,0,0,0.4);
+            --shadow-lg: 0 16px 64px rgba(0,0,0,0.5);
+            --shadow-glow: 0 0 60px rgba(97,60,158,0.15);
+            --shadow-glow-accent: 0 0 60px rgba(197,62,143,0.15);
+        }
+
+        /* ═══════════════════════════════════════════════════════
+           RESET & BASE
+        ═══════════════════════════════════════════════════════ */
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            font-size: 16px;
+        }
+
+        @media (max-width: 768px) {
+            html { font-size: 15px; }
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: var(--bg-body);
+            color: var(--text-primary);
+            line-height: 1.7;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            padding-bottom: env(safe-area-inset-bottom, 0);
+        }
+
+        a { text-decoration: none; color: inherit; }
+        img { max-width: 100%; display: block; }
+        ul { list-style: none; }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 clamp(16px, 4vw, 24px);
+            position: relative;
+            z-index: 2;
+        }
+
+        /* ═══════════════════════════════════════════════════════
+           ANIMATED BACKGROUND
+        ═══════════════════════════════════════════════════════ */
+        .bg-effects {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .bg-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(120px);
+        }
+
+        .bg-orb--1 {
+            width: 800px; height: 800px;
+            background: var(--primary);
+            opacity: 0.12;
+            top: -300px; right: -200px;
+            animation: orbFloat 30s ease-in-out infinite;
+        }
+
+        .bg-orb--2 {
+            width: 600px; height: 600px;
+            background: var(--accent);
+            opacity: 0.08;
+            bottom: -200px; left: -150px;
+            animation: orbFloat 25s ease-in-out infinite reverse;
+        }
+
+        .bg-orb--3 {
+            width: 500px; height: 500px;
+            background: var(--highlight);
+            opacity: 0.06;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            animation: orbPulse 20s ease-in-out infinite;
+        }
+
+        .bg-grid {
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(97,60,158,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(97,60,158,0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        @keyframes orbFloat {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(60px, -50px) scale(1.1); }
+            66% { transform: translate(-40px, 40px) scale(0.9); }
+        }
+
+        @keyframes orbPulse {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.06; }
+            50% { transform: translate(-50%, -50%) scale(1.3); opacity: 0.1; }
+        }
+
+        /* ═══════════════════════════════════════════════════════
+           HEADER / NAVIGATION
+        ═══════════════════════════════════════════════════════ */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 18px 0;
+            background: rgba(6, 6, 10, 0.7);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .header.scrolled {
+            padding: 12px 0;
+            background: rgba(6, 6, 10, 0.92);
+            border-bottom-color: rgba(97,60,158,0.1);
+        }
+
+        .header__inner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header__logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .header__logo:hover { transform: scale(1.03); }
+
+        .header__logo img {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+        }
+
+        .header__logo-text {
+            font-size: 26px;
+            font-weight: 900;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 3px;
+        }
+
+        .header__nav {
+            display: flex;
+            gap: 36px;
+        }
+
+        .header__nav a {
+            color: var(--text-secondary);
+            font-weight: 600;
+            font-size: 14px;
+            transition: color 0.3s ease;
+            position: relative;
+            padding: 6px 0;
+        }
+
+        .header__nav a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 0;
+            height: 2px;
+            background: var(--gradient);
+            transition: width 0.3s ease;
+            border-radius: 2px;
+        }
+
+        .header__nav a:hover { color: var(--text-primary); }
+        .header__nav a:hover::after { width: 100%; }
+
+        .header__cta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* Mobile menu toggle */
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 24px;
+            cursor: pointer;
+            padding: 8px;
+        }
+
+        /* ═══════════════════════════════════════════════════════
+           BUTTONS
+        ═══════════════════════════════════════════════════════ */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 32px;
+            border-radius: var(--radius-full);
+            font-family: 'Cairo', sans-serif;
+            font-weight: 700;
+            font-size: 15px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        .btn--primary {
+            background: var(--gradient);
+            color: #fff;
+            box-shadow: 0 8px 32px rgba(97,60,158,0.4);
+        }
+
+        .btn--primary::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.6s ease;
+        }
+
+        .btn--primary:hover::before { transform: translateX(100%); }
+        .btn--primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 16px 48px rgba(97,60,158,0.5);
+        }
+
+        .btn--outline {
+            background: transparent;
+            color: var(--text-primary);
+            border: 2px solid rgba(255,255,255,0.1);
+        }
+
+        .btn--outline:hover {
+            border-color: var(--primary);
+            background: rgba(97,60,158,0.08);
+            transform: translateY(-3px);
+        }
+
+        .btn--ghost {
+            background: rgba(255,255,255,0.04);
+            color: var(--text-secondary);
+            padding: 10px 24px;
+            font-size: 14px;
+        }
+
+        .btn--ghost:hover {
+            background: rgba(255,255,255,0.08);
+            color: var(--text-primary);
+        }
+
+        .btn--lg {
+            padding: 18px 44px;
+            font-size: 17px;
+        }
+
+        .btn--sm {
+            padding: 10px 24px;
+            font-size: 13px;
+        }
+
+        /* ═══════════════════════════════════════════════════════
+           SECTION HEADERS
+        ═══════════════════════════════════════════════════════ */
+        .section {
+            padding: 120px 0;
+            position: relative;
+        }
+
+        .section__badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(97,60,158,0.08);
+            border: 1px solid rgba(97,60,158,0.2);
+            padding: 8px 20px;
+            border-radius: var(--radius-full);
+            font-size: 13px;
+            color: var(--accent-light);
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .section__badge i {
+            font-size: 11px;
+        }
+
+        .section__title {
+            font-size: 48px;
+            font-weight: 900;
+            line-height: 1.2;
+            margin-bottom: 18px;
+        }
+
+        .section__title span {
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .section__subtitle {
+            font-size: 18px;
+            color: var(--text-secondary);
+            max-width: 640px;
+            line-height: 1.8;
+        }
+
+        .section__header {
+            text-align: center;
+            margin-bottom: 72px;
+        }
+
+        .section__header .section__subtitle {
+            margin: 0 auto;
+        }
+
+        /* ═══════════════════════════════════════════════════════
+           LAUNCH BANNER (Sticky top)
+        ═══════════════════════════════════════════════════════ */
+        .launch-banner {
+            background: var(--gradient);
+            text-align: center;
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: 700;
+            color: #fff;
+            position: relative;
+            z-index: 1001;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            line-height: 1.5;
+        }
+
+        @media (max-width: 480px) {
+            .launch-banner { font-size: 12px; padding: 10px 14px; }
+        }
+
+        .launch-banner__pulse {
+            width: 8px;
+            height: 8px;
+            background: #fff;
+            border-radius: 50%;
+            animation: pulseDot 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulseDot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.5); }
+        }
+
+        /* ═══════════════════════════════════════════════════════
+           HERO SECTION
+        ═══════════════════════════════════════════════════════ */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 180px 0 120px;
+            position: relative;
+        }
+
+        .hero__grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 80px;
+            align-items: center;
+        }
+
+        .hero__badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(97,60,158,0.1);
+            border: 1px solid rgba(97,60,158,0.25);
+            padding: 10px 22px;
+            border-radius: var(--radius-full);
+            font-size: 13px;
+            color: var(--accent-light);
+            font-weight: 600;
+            margin-bottom: 16px;
+            animation: fadeUp 0.8s ease forwards;
+            opacity: 0;
+        }
+
+        .hero__prelaunch {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            max-width: 520px;
+            padding: 12px 18px;
+            border-radius: var(--radius-md);
+            background: rgba(255, 159, 10, 0.08);
+            border: 1px solid rgba(255, 159, 10, 0.28);
+            color: var(--warning);
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 24px;
+            line-height: 1.65;
+            animation: fadeUp 0.8s ease 0.05s forwards;
+            opacity: 0;
+        }
+
+        .hero__prelaunch i {
+            margin-top: 3px;
+            flex-shrink: 0;
+        }
+
+        .hero__title {
+            font-size: 56px;
+            font-weight: 900;
+            line-height: 1.15;
+            margin-bottom: 24px;
+            animation: fadeUp 0.8s ease 0.1s forwards;
+            opacity: 0;
+        }
+
+        .hero__title span {
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: relative;
+        }
+
+        .hero__desc {
+            font-size: 18px;
+            color: var(--text-secondary);
+            margin-bottom: 36px;
+            max-width: 520px;
+            line-height: 1.9;
+            animation: fadeUp 0.8s ease 0.2s forwards;
+            opacity: 0;
+        }
+
+        .hero__actions {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 48px;
+            animation: fadeUp 0.8s ease 0.3s forwards;
+            opacity: 0;
+            flex-wrap: wrap;
+        }
+
+        .hero__stats {
+            display: flex;
+            gap: 48px;
+            animation: fadeUp 0.8s ease 0.4s forwards;
+            opacity: 0;
+        }
+
+        .hero__stat-value {
+            font-size: 36px;
+            font-weight: 900;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero__stat-label {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* Hero Visual */
+        .hero__visual {
+            position: relative;
+            animation: fadeLeft 1s ease 0.5s forwards;
+            opacity: 0;
+        }
+
+        .hero__mockup {
+            position: relative;
+            width: 100%;
+            max-width: 520px;
+            margin: 0 auto;
+        }
+
+        .hero__mockup-screen {
+            background: var(--bg-card);
+            border-radius: var(--radius-xl);
+            border: 1px solid rgba(255,255,255,0.06);
+            overflow: hidden;
+            box-shadow: var(--shadow-lg), var(--shadow-glow);
+            padding: 0;
+        }
+
+        .mockup-titlebar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 20px;
+            background: rgba(0,0,0,0.3);
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+        }
+
+        .mockup-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .mockup-dot--red { background: #FF5F57; }
+        .mockup-dot--yellow { background: #FFBD2E; }
+        .mockup-dot--green { background: #28C840; }
+
+        .mockup-titlebar span {
+            flex: 1;
+            text-align: center;
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .mockup-body {
+            padding: 24px;
+        }
+
+        .mockup-sidebar {
+            display: grid;
+            grid-template-columns: 60px 1fr;
+            gap: 20px;
+            min-height: 320px;
+        }
+
+        .sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            align-items: center;
+            padding-top: 10px;
+        }
+
+        .sidebar-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: rgba(255,255,255,0.04);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-icon.active {
+            background: var(--gradient);
+            color: #fff;
+            box-shadow: 0 4px 16px rgba(97,60,158,0.4);
+        }
+
+        .mockup-content {
+            flex: 1;
+        }
+
+        .mockup-top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .mockup-search {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 10px;
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-muted);
+            font-size: 12px;
+            width: 200px;
+        }
+
+        .mockup-products {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        .mockup-product {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.04);
+            border-radius: 14px;
+            padding: 14px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .mockup-product:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .mockup-product__img {
+            width: 100%;
+            height: 50px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+
+        .mockup-product__name {
+            font-size: 10px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .mockup-product__price {
+            font-size: 11px;
+            color: var(--accent);
+            font-weight: 800;
+        }
+
+        /* Floating badges around mockup */
+        .hero__float {
+            position: absolute;
+            background: var(--bg-card-elevated);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: var(--radius-md);
+            padding: 14px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: var(--shadow-md);
+            z-index: 5;
+        }
+
+        .hero__float-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: var(--gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .hero__float-text h5 {
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+
+        .hero__float-text p {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .hero__float--1 {
+            top: 5%;
+            left: -10%;
+            animation: floatBadge 6s ease-in-out infinite;
+        }
+
+        .hero__float--2 {
+            bottom: 15%;
+            right: -5%;
+            animation: floatBadge 6s ease-in-out infinite 2s;
+        }
+
+        .hero__float--3 {
+            bottom: 35%;
+            left: -15%;
+            animation: floatBadge 6s ease-in-out infinite 4s;
+        }
+
+        @keyframes floatBadge {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-14px); }
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeLeft {
+            from { opacity: 0; transform: translateX(50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        /* ═══════════════════════════════════════════════════════
+           TRUSTED BY / SOCIAL PROOF
+        ═══════════════════════════════════════════════════════ */
+        .trust {
+            padding: 60px 0;
+            border-top: 1px solid rgba(255,255,255,0.04);
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+        }
+
+        .trust__inner {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 48px;
+            flex-wrap: wrap;
+        }
+
+        .trust__item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--text-muted);
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .trust__item i {
+            font-size: 24px;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* ═══════════════════════════════════════════════════════
+           HERO: إجابات الثواني الأولى (انطباع أولى + ثقة)
+        ═══════════════════════════════════════════════════════ */
+        .hero__answers {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
+            margin-top: 28px;
+            max-width: 560px;
+            animation: fadeUp 0.8s ease 0.45s forwards;
+            opacity: 0;
+        }
+
+        .hero__answer {
+            padding: 14px 16px;
+            border-radius: var(--radius-md);
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            font-size: 13px;
+            line-height: 1.55;
+        }
+
+        .hero__answer strong {
+            display: block;
+            color: var(--text-primary);
+            font-weight: 800;
+            margin-bottom: 6px;
+            font-size: 13px;
+        }
+
+        .hero__answer span {
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        /* ═══════════════════════════════════════════════════════
+           PAIN → BENEFIT (مواءمة محلية)
+        ═══════════════════════════════════════════════════════ */
+        .pain-section {
+            padding: 96px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.04);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            background: linear-gradient(180deg, rgba(97, 60, 158, 0.06) 0%, transparent 55%);
+        }
+
+        .pain-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        .pain-card {
+            background: var(--bg-card);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: var(--radius-lg);
+            padding: 28px 24px;
+            transition: border-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .pain-card:hover {
+            border-color: rgba(97, 60, 158, 0.25);
+            transform: translateY(-4px);
+        }
+
+        .pain-card__label {
+            font-size: 11px;
+            font-weight: 800;
+            color: var(--highlight);
+            letter-spacing: 0.03em;
+            margin-bottom: 10px;
+        }
+
+        .pain-card h3 {
+            font-size: 17px;
+            font-weight: 800;
+            margin-bottom: 12px;
+            line-height: 1.35;
+        }
+
+        .pain-card__pain {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 14px;
+            line-height: 1.75;
+        }
+
+        .pain-card__gain {
+            font-size: 14px;
+            color: var(--accent-light);
+            font-weight: 700;
+            line-height: 1.7;
+            padding-top: 14px;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .honest-proof {
+            margin-top: 48px;
+            padding: 22px 26px;
+            border-radius: var(--radius-lg);
+            background: rgba(52, 199, 89, 0.06);
+            border: 1px solid rgba(52, 199, 89, 0.2);
+            text-align: center;
+            max-width: 720px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .honest-proof p {
+            font-size: 15px;
+            color: var(--text-secondary);
+            line-height: 1.85;
+        }
+
+        .honest-proof strong {
+            color: var(--success);
+        }
+
+        /* ═══════════════════════════════════════════════════════
+           FEATURES SECTION
+        ═══════════════════════════════════════════════════════ */
+        .features__grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        .feature-card {
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.04);
+            border-radius: var(--radius-lg);
+            padding: 36px 28px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient);
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform 0.4s ease;
+        }
+
+        .feature-card:hover {
+            border-color: rgba(97,60,158,0.2);
+            transform: translateY(-6px);
+            box-shadow: var(--shadow-lg), var(--shadow-glow);
+        }
+
+        .feature-card:hover::before {
+            transform: scaleX(1);
+            transform-origin: left;
+        }
+
+        .feature-card__icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            background: var(--gradient-subtle);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+            transition: all 0.4s ease;
+        }
+
+        .feature-card:hover .feature-card__icon {
+            background: var(--gradient);
+            box-shadow: 0 8px 24px rgba(97,60,158,0.3);
+            transform: scale(1.05);
+        }
+
+        .feature-card__icon i {
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            transition: all 0.4s ease;
+        }
+
+        .feature-card:hover .feature-card__icon i {
+            -webkit-text-fill-color: #fff;
+        }
+
+        .feature-card__title {
+            font-size: 18px;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .feature-card__benefit {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--accent-light);
+            line-height: 1.65;
+            margin-bottom: 12px;
+        }
+
+        .feature-card__desc {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+
+        /* ═══════════════════════════════════════════════════════
+           ZOVI AI SECTION (Highlight)
+        ═══════════════════════════════════════════════════════ */
+        .ai-section {
+            padding: 140px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ai-section::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(197,62,143,0.08) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .ai__grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 80px;
+            align-items: center;
+        }
+
+        .ai__visual {
+            position: relative;
+        }
+
+        .ai__brain {
+            width: 360px;
+            height: 360px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .ai__brain-core {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 120px;
+            height: 120px;
+            background: var(--gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 42px;
+            box-shadow: 0 0 80px rgba(197,62,143,0.4), 0 0 160px rgba(97,60,158,0.2);
+            animation: aiPulse 3s ease-in-out infinite;
+            z-index: 2;
+        }
+
+        .ai__brain-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            border: 1px solid rgba(197,62,143,0.15);
+        }
+
+        .ai__brain-ring--1 {
+            width: 200px;
+            height: 200px;
+            animation: ringRotate 15s linear infinite;
+        }
+
+        .ai__brain-ring--2 {
+            width: 280px;
+            height: 280px;
+            animation: ringRotate 20s linear infinite reverse;
+            border-color: rgba(97,60,158,0.12);
+        }
+
+        .ai__brain-ring--3 {
+            width: 360px;
+            height: 360px;
+            animation: ringRotate 25s linear infinite;
+            border-color: rgba(240,87,91,0.08);
+        }
+
+        .ai__brain-dot {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: var(--accent);
+            border-radius: 50%;
+            box-shadow: 0 0 12px rgba(197,62,143,0.6);
+        }
+
+        .ai__brain-ring--1 .ai__brain-dot { top: -5px; left: 50%; transform: translateX(-50%); }
+        .ai__brain-ring--2 .ai__brain-dot { bottom: -5px; right: 20%; }
+        .ai__brain-ring--3 .ai__brain-dot { top: 20%; left: -5px; }
+
+        @keyframes aiPulse {
+            0%, 100% { box-shadow: 0 0 80px rgba(197,62,143,0.4), 0 0 160px rgba(97,60,158,0.2); }
+            50% { box-shadow: 0 0 120px rgba(197,62,143,0.5), 0 0 200px rgba(97,60,158,0.3); transform: translate(-50%, -50%) scale(1.05); }
+        }
+
+        @keyframes ringRotate {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        .ai__content .section__badge {
+            background: rgba(197,62,143,0.1);
+            border-color: rgba(197,62,143,0.25);
+            color: var(--highlight-light);
+        }
+
+        .ai__features {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-top: 32px;
+        }
+
+        .ai__feature {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 16px;
+            border-radius: var(--radius-md);
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.04);
+            transition: all 0.3s ease;
+        }
+
+        .ai__feature:hover {
+            background: rgba(197,62,143,0.05);
+            border-color: rgba(197,62,143,0.15);
+            transform: translateX(6px);
+        }
+
+        .ai__feature-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: var(--gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .ai__feature-text h4 {
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .ai__feature-text p {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .ai__new-badge {
+            display: inline-block;
+            background: var(--highlight);
+            color: #fff;
+            font-size: 10px;
+            font-weight: 800;
+            padding: 3px 10px;
+            border-radius: 6px;
+            margin-right: 8px;
+            animation: pulseBadge 2s ease-in-out infinite;
+        }
+
+        @keyframes pulseBadge {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        /* ═══════════════════════════════════════════════════════
+           HOW IT WORKS / WORKFLOW
+        ═══════════════════════════════════════════════════════ */
+        .workflow__steps {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 32px;
+            position: relative;
+        }
+
+        .workflow__steps::before {
+            content: '';
+            position: absolute;
+            top: 48px;
+            right: 15%;
+            left: 15%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--primary), var(--accent), var(--highlight), transparent);
+            z-index: 0;
+        }
+
+        .workflow__step {
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .workflow__step-num {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: var(--gradient);
+            border: 2px solid rgba(255,255,255,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 26px;
+            font-weight: 900;
+            color: #fff;
+            -webkit-text-fill-color: #fff;
+            box-shadow: 0 8px 28px rgba(97,60,158,0.35);
+            transition: transform 0.35s ease, box-shadow 0.35s ease;
+        }
+
+        .workflow__step:hover .workflow__step-num {
+            transform: scale(1.22);
+            box-shadow: 0 14px 48px rgba(97,60,158,0.55);
+        }
+
+        .workflow__step h4 {
+            font-size: 16px;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .workflow__step p {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        /* ═══════════════════════════════════════════════════════
+           PLATFORMS SECTION
+        ═══════════════════════════════════════════════════════ */
+        .platforms__grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 28px;
+        }
+
+        .platform-card {
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.04);
+            border-radius: var(--radius-lg);
+            padding: 48px 32px;
+            text-align: center;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .platform-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient);
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+        }
+
+        .platform-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(97,60,158,0.2);
+            box-shadow: var(--shadow-lg), var(--shadow-glow);
+        }
+
+        .platform-card:hover::after {
+            transform: scaleX(1);
+        }
+
+        .platform-card__icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 24px;
+            background: var(--gradient-subtle);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            margin: 0 auto 24px;
+            transition: all 0.4s ease;
+        }
+
+        .platform-card:hover .platform-card__icon {
+            background: var(--gradient);
+            transform: scale(1.08) rotate(-3deg);
+            box-shadow: 0 12px 32px rgba(97,60,158,0.3);
+        }
+
+        .platform-card__icon i {
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            transition: all 0.4s ease;
+        }
+
+        .platform-card:hover .platform-card__icon i {
+            -webkit-text-fill-color: #fff;
+        }
+
+        .platform-card__name {
+            font-size: 22px;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+
+        .platform-card__desc {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+
+        .platform-card__status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--success);
+        }
+
+        .platform-card__status i {
+            font-size: 10px;
+        }
+
+        /* ═══════════════════════════════════════════════════════
+           PRICING SECTION
+        ═══════════════════════════════════════════════════════ */
+        .pricing {
+            background: linear-gradient(180deg, var(--bg-body) 0%, rgba(15,15,24,0.5) 50%, var(--bg-body) 100%);
+        }
+
+        .pricing__hint {
+            max-width: 640px;
+            margin: 12px auto 0;
+            text-align: center;
+            font-size: 15px;
+            color: var(--text-secondary);
+            line-height: 1.85;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .pricing__hint { padding: 0 8px; }
+        }
+
+        .pricing__launch-notice {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .pricing__launch-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(135deg, rgba(240,87,91,0.12), rgba(255,159,10,0.12));
+            border: 1px solid rgba(240,87,91,0.25);
+            padding: 12px 28px;
+            border-radius: var(--radius-full);
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--highlight);
+        }
+
+        .pricing__launch-tag i {
+            animation: rocketShake 1s ease-in-out infinite;
+        }
+
+        @keyframes rocketShake {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-5deg); }
+            75% { transform: rotate(5deg); }
+        }
+
+        .pricing__grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 24px;
+            max-width: 1180px;
+            margin: 0 auto;
+            align-items: stretch;
+        }
+
+        .pricing-card--free {
+            border-color: rgba(52, 199, 89, 0.22);
+            background: linear-gradient(180deg, rgba(52, 199, 89, 0.05) 0%, var(--bg-card) 45%);
+        }
+
+        .pricing-card--free:hover {
+            border-color: rgba(52, 199, 89, 0.35);
+        }
+
+        .pricing-card__trial-tag {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 800;
+            color: var(--success);
+            background: rgba(52, 199, 89, 0.12);
+            border: 1px solid rgba(52, 199, 89, 0.25);
+            padding: 4px 12px;
+            border-radius: var(--radius-full);
+            margin-bottom: 10px;
+        }
+
+        .pricing-card {
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.04);
+            border-radius: var(--radius-xl);
+            padding: 44px 36px;
+            position: relative;
+            transition: all 0.4s ease;
+            overflow: hidden;
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-6px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .pricing-card--popular {
+            border-color: rgba(197,62,143,0.3);
+            background: linear-gradient(180deg, rgba(197,62,143,0.06) 0%, var(--bg-card) 40%);
+            box-shadow: var(--shadow-glow-accent);
+            padding-top: 56px;
+        }
+
+        .pricing-card--popular:hover {
+            box-shadow: 0 24px 80px rgba(197,62,143,0.2);
+        }
+
+        .pricing-card__popular-tag {
+            position: absolute;
+            top: -1px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--gradient);
+            color: #fff;
+            padding: 6px 24px;
+            font-size: 12px;
+            font-weight: 800;
+            border-radius: 0 0 14px 14px;
+        }
+
+        .pricing-card__name {
+            font-size: 20px;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .pricing-card__desc {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+        }
+
+        .pricing-card__price {
+            margin-bottom: 28px;
+        }
+
+        .pricing-card__amount {
+            font-size: 52px;
+            font-weight: 900;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1;
+        }
+
+        .pricing-card__currency {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-secondary);
+            margin-right: 4px;
+        }
+
+        .pricing-card__period {
+            font-size: 15px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .pricing-card__features {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin-bottom: 32px;
+        }
+
+        .pricing-card__feature {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+        }
+
+        .pricing-card__feature i.fa-check {
+            color: var(--success);
+            font-size: 12px;
+            width: 22px;
+            height: 22px;
+            background: rgba(52,199,89,0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .pricing-card__feature i.fa-xmark {
+            color: var(--text-muted);
+            font-size: 12px;
+            width: 22px;
+            height: 22px;
+            background: rgba(255,255,255,0.04);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .pricing-card__feature--disabled {
+            color: var(--text-muted);
+            text-decoration: line-through;
+            opacity: 0.6;
+        }
+
+        .pricing-card .btn {
+            width: 100%;
+            justify-content: center;
+        }
+
+        /* Extra branch note */
+        .pricing__extra {
+            text-align: center;
+            margin-top: 40px;
+            padding: 28px;
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: var(--radius-lg);
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .pricing__extra-title {
+            font-size: 18px;
+            font-weight: 800;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .pricing__extra-title i {
+            color: var(--accent);
+        }
+
+        .pricing__extra-desc {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.9;
+        }
+
+        .pricing__extra-highlight {
+            color: var(--accent-light);
+            font-weight: 700;
+        }
+
+        /* ═══════════════════════════════════════════════════════
+           OFFLINE-FIRST HIGHLIGHT
+        ═══════════════════════════════════════════════════════ */
+        .offline-banner {
+            padding: 100px 0;
+            position: relative;
+        }
+
+        .offline-banner__card {
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: var(--radius-xl);
+            padding: 64px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .offline-banner__card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(ellipse at top right, rgba(97,60,158,0.08), transparent 60%);
+            pointer-events: none;
+        }
+
+        .offline-banner__points {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-top: 28px;
+        }
+
+        .offline-banner__point {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            font-size: 15px;
+        }
+
+        .offline-banner__point i {
+            width: 32px;
+            height: 32px;
+            border-radius: 10px;
+            background: rgba(52,199,89,0.1);
+            color: var(--success);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .offline-visual {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .offline-visual__icon {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: var(--gradient-subtle);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .offline-visual__icon i {
+            font-size: 72px;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .offline-visual__icon::before {
+            content: '';
+            position: absolute;
+            inset: -20px;
+            border-radius: 50%;
+            border: 2px dashed rgba(97,60,158,0.15);
+            animation: ringRotate 30s linear infinite;
+        }
+
+        .offline-visual__icon::after {
+            content: '';
+            position: absolute;
+            inset: -40px;
+            border-radius: 50%;
+            border: 1px dashed rgba(197,62,143,0.1);
+            animation: ringRotate 40s linear infinite reverse;
+        }
+
+        /* ═══════════════════════════════════════════════════════
+           TESTIMONIALS / NUMBERS
+        ═══════════════════════════════════════════════════════ */
+        .stats-section {
+            padding: 80px 0;
+        }
+
+        .stats__grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.04);
+            border-radius: var(--radius-lg);
+            padding: 36px 24px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(97,60,158,0.15);
+        }
+
+        .stat-card__number {
+            font-size: 42px;
+            font-weight: 900;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 4px;
+        }
+
+        .stat-card__label {
+            font-size: 14px;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        /* ═══════════════════════════════════════════════════════
+           FAQ SECTION
+        ═══════════════════════════════════════════════════════ */
+        .faq__grid {
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .faq-item {
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.04);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .faq-item:hover {
+            border-color: rgba(97,60,158,0.15);
+        }
+
+        .faq-item__q {
+            padding: 22px 28px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: color 0.3s ease;
+            user-select: none;
+        }
+
+        .faq-item__q:hover {
+            color: var(--accent-light);
+        }
+
+        .faq-item__q i {
+            transition: transform 0.3s ease;
+            font-size: 14px;
+            color: var(--accent);
+        }
+
+        .faq-item.active .faq-item__q i {
+            transform: rotate(180deg);
+        }
+
+        .faq-item__a {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), padding 0.4s ease;
+        }
+
+        .faq-item.active .faq-item__a {
+            max-height: 300px;
+            padding: 0 28px 22px;
+        }
+
+        .faq-item__a p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.9;
+        }
+
+        /* ═══════════════════════════════════════════════════════
+           CTA SECTION
+        ═══════════════════════════════════════════════════════ */
+        .cta-section {
+            padding: 120px 0;
+        }
+
+        .cta-section__card {
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: var(--radius-xl);
+            padding: 80px 60px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-section__card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at center, rgba(97,60,158,0.06), transparent 50%);
+            animation: ctaGlow 10s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes ctaGlow {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.2); opacity: 1; }
+        }
+
+        .cta-section__title {
+            font-size: 44px;
+            font-weight: 900;
+            margin-bottom: 18px;
+            position: relative;
+        }
+
+        .cta-section__subtitle {
+            font-size: 18px;
+            color: var(--text-secondary);
+            margin-bottom: 36px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            position: relative;
+        }
+
+        .cta-section__buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            position: relative;
+            flex-wrap: wrap;
+        }
+
+        /* ═══════════════════════════════════════════════════════
+           FOOTER
+        ═══════════════════════════════════════════════════════ */
+        .footer {
+            padding: 60px 0 30px;
+            border-top: 1px solid rgba(255,255,255,0.04);
+        }
+
+        .footer__grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 48px;
+            margin-bottom: 48px;
+        }
+
+        .footer__brand-desc {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-top: 16px;
+            max-width: 320px;
+            line-height: 1.8;
+        }
+
+        .footer__socials {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .footer__social {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: rgba(255,255,255,0.04);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .footer__social:hover {
+            background: var(--gradient);
+            color: #fff;
+            transform: translateY(-3px);
+        }
+
+        .footer__col h4 {
+            font-size: 15px;
+            font-weight: 800;
+            margin-bottom: 20px;
+            color: var(--text-primary);
+        }
+
+        .footer__col a {
+            display: block;
+            font-size: 14px;
+            color: var(--text-secondary);
+            padding: 6px 0;
+            transition: all 0.3s ease;
+        }
+
+        .footer__col a:hover {
+            color: var(--accent-light);
+            transform: translateX(4px);
+        }
+
+        .footer__bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 28px;
+            border-top: 1px solid rgba(255,255,255,0.04);
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        /* ═══════════════════════════════════════════════════════
+           SCROLL ANIMATIONS
+        ═══════════════════════════════════════════════════════ */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .reveal-delay-1 { transition-delay: 0.1s; }
+        .reveal-delay-2 { transition-delay: 0.2s; }
+        .reveal-delay-3 { transition-delay: 0.3s; }
+        .reveal-delay-4 { transition-delay: 0.4s; }
+
+        /* ═══════════════════════════════════════════════════════
+           RESPONSIVE
+        ═══════════════════════════════════════════════════════ */
+        @media (max-width: 1024px) {
+            .hero__grid { grid-template-columns: 1fr; gap: 60px; }
+            .hero__visual { order: -1; }
+            .hero__title { font-size: 44px; }
+            .features__grid { grid-template-columns: repeat(2, 1fr); }
+            .ai__grid { grid-template-columns: 1fr; gap: 60px; }
+            .ai__visual { order: -1; }
+            .workflow__steps { grid-template-columns: repeat(2, 1fr); }
+            .workflow__steps::before { display: none; }
+            .hero__answers { grid-template-columns: 1fr; max-width: 100%; }
+            .pain-grid { grid-template-columns: 1fr; }
+            .platforms__grid { grid-template-columns: repeat(2, 1fr); }
+            .pricing__grid {
+                display: flex;
+                flex-direction: column;
+                max-width: 520px;
+                gap: 24px;
+            }
+            .pricing-card--popular { order: -1; }
+            .offline-banner__card { grid-template-columns: 1fr; padding: 40px; }
+            .stats__grid { grid-template-columns: repeat(2, 1fr); }
+            .footer__grid { grid-template-columns: repeat(2, 1fr); }
+            .header__nav { display: none; }
+            .menu-toggle { display: block; }
+        }
+
+        @media (max-width: 768px) {
+            .section { padding: 80px 0; }
+            .section__title { font-size: 32px; }
+            .hero { padding: 140px 0 80px; }
+            .hero__title { font-size: 36px; }
+            .hero__stats { gap: 28px; flex-wrap: wrap; }
+            .hero__float { display: none; }
+            .features__grid { grid-template-columns: 1fr; }
+            .platforms__grid { grid-template-columns: 1fr; }
+            .workflow__steps { grid-template-columns: 1fr; gap: 24px; }
+            .stats__grid { grid-template-columns: repeat(2, 1fr); }
+            .footer__grid { grid-template-columns: 1fr; }
+            .footer__bottom { flex-direction: column; gap: 12px; text-align: center; }
+            .cta-section__card { padding: 48px 24px; }
+            .cta-section__title { font-size: 32px; }
+            .offline-banner__card { padding: 32px 20px; }
+            .pricing-card { padding: 32px 24px; }
+            .btn { min-height: 48px; }
+            body { padding-bottom: 88px; }
+        }
+
+        @media (max-width: 480px) {
+            .hero__title { font-size: 30px; }
+            .hero__actions { flex-direction: column; }
+            .hero__actions .btn { width: 100%; justify-content: center; }
+            .pricing-card__amount { font-size: 40px; }
+            .section__title { font-size: 28px; }
+            .ai__brain { width: 260px; height: 260px; }
+            .ai__brain-core { width: 90px; height: 90px; font-size: 32px; }
+            .ai__brain-ring--1 { width: 150px; height: 150px; }
+            .ai__brain-ring--2 { width: 210px; height: 210px; }
+            .ai__brain-ring--3 { width: 260px; height: 260px; }
+        }
+
+        /* Mobile nav overlay */
+        .mobile-nav {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(6,6,10,0.97);
+            backdrop-filter: blur(24px);
+            z-index: 999;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 28px;
+        }
+
+        .mobile-nav.open { display: flex; }
+
+        .mobile-nav a {
+            color: var(--text-primary);
+            font-size: 20px;
+            font-weight: 700;
+            transition: color 0.3s ease;
+        }
+
+        .mobile-nav a:hover { color: var(--accent); }
+
+        .mobile-nav__close {
+            position: absolute;
+            top: 24px;
+            left: 24px;
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 28px;
+            cursor: pointer;
+        }
+
+        /* Comparison table within pricing */
+        .compare-highlight {
+            background: rgba(197,62,143,0.05);
+            padding: 2px 8px;
+            border-radius: 6px;
+            color: var(--accent-light);
+            font-weight: 700;
+        }
+
+        /* Floating WhatsApp */
+        .whatsapp-float {
+            position: fixed;
+            bottom: calc(22px + env(safe-area-inset-bottom, 0px));
+            inset-inline-end: calc(22px + env(safe-area-inset-end, 0px));
+            z-index: 9998;
+            width: 58px;
+            height: 58px;
+            border-radius: 50%;
+            background: linear-gradient(145deg, #25D366, #128C7E);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            box-shadow: 0 10px 36px rgba(37, 211, 102, 0.45);
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+
+        .whatsapp-float:hover {
+            transform: scale(1.08);
+            box-shadow: 0 14px 44px rgba(37, 211, 102, 0.55);
+            color: #fff;
+        }
+
+        .whatsapp-float:focus-visible {
+            outline: 2px solid #fff;
+            outline-offset: 3px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Effects -->
+    <div class="bg-effects">
+        <div class="bg-orb bg-orb--1"></div>
+        <div class="bg-orb bg-orb--2"></div>
+        <div class="bg-orb bg-orb--3"></div>
+    </div>
+    <div class="bg-grid"></div>
+
+    <!-- Launch Banner -->
+    <div class="launch-banner">
+        <div class="launch-banner__pulse"></div>
+        <span>البرنامج لسه ما انطلقش رسمياً — الصفحة للتعريف والحجز المبكر. سعر إطلاق محدود لما نوصل للإصدار التجاري.</span>
+        <div class="launch-banner__pulse"></div>
+    </div>
+
+    <!-- Mobile Nav -->
+    <div class="mobile-nav" id="mobileNav">
+        <button class="mobile-nav__close" id="mobileNavClose"><i class="fas fa-times"></i></button>
+        <a href="#features" onclick="closeMobileNav()">المميزات</a>
+        <a href="#value" onclick="closeMobileNav()">ليه Zovix؟</a>
+        <a href="#ai" onclick="closeMobileNav()">Zovi AI</a>
+        <a href="#platforms" onclick="closeMobileNav()">الأنظمة</a>
+        <a href="#pricing" onclick="closeMobileNav()">الأسعار</a>
+        <a href="#faq" onclick="closeMobileNav()">أسئلة شائعة</a>
+        <a href="https://wa.me/201037153447" target="_blank" rel="noopener noreferrer" onclick="closeMobileNav()">واتساب سريع</a>
+    </div>
+
+    <!-- Header -->
+    <header class="header" id="header">
+        <div class="container">
+            <div class="header__inner">
+                <a href="#" class="header__logo">
+                    <img src="540.png" alt="Zovix POS">
+                    <span class="header__logo-text">ZOVIX</span>
+                </a>
+                <nav class="header__nav">
+                    <a href="#features">المميزات</a>
+                    <a href="#value">ليه Zovix؟</a>
+                    <a href="#ai">Zovi AI</a>
+                    <a href="#platforms">الأنظمة</a>
+                    <a href="#pricing">الأسعار</a>
+                    <a href="#faq">أسئلة شائعة</a>
+                </nav>
+                <div class="header__cta">
+                    <a href="#pricing" class="btn btn--primary btn--sm">ابدأ الآن</a>
+                    <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ═══════════════════════════════════════════
+         HERO SECTION
+    ═══════════════════════════════════════════ -->
+    <section class="hero" id="hero">
+        <div class="container">
+            <div class="hero__grid">
+                <div class="hero__text">
+                    <div class="hero__badge">
+                        <i class="fas fa-bolt"></i>
+                        Zovix POS — Offline First + باقة تجربة مجانية
+                    </div>
+                    <div class="hero__prelaunch">
+                        <i class="fas fa-circle-info"></i>
+                        <span>وضّحنا لك بوضوح: الإصدار التجاري لسه منطلقش. تقدر تتفرّج على الباقات وتسجّل اهتمامك، وواتساب تحت للرد السريع.</span>
+                    </div>
+                    <h1 class="hero__title">
+                        أدِر محلك بالكامل
+                        <br>من نظام <span>واحد ذكي</span>
+                    </h1>
+                    <p class="hero__desc">
+                        Zovix POS مش مجرد كاشير — نظام متكامل لمحلات الملابس والتجزئة: أوفلاين أولاً، وباقة تجربة مجانية (أونلاين أو أوفلاين)، وباقة برو مع ذكاء اصطناعي <strong style="color: var(--accent);">Zovi AI</strong>. التطبيق قيد الإطلاق — تابعنا للتحميل قريباً.
+                    </p>
+                    <div class="hero__actions">
+                        <a href="#pricing" class="btn btn--primary btn--lg">
+                            <i class="fas fa-rocket"></i>
+                            شوف الباقات
+                        </a>
+                        <a href="#features" class="btn btn--outline btn--lg">
+                            اكتشف المميزات
+                            <i class="fas fa-arrow-left"></i>
+                        </a>
+                    </div>
+                    <div class="hero__stats">
+                        <div>
+                            <div class="hero__stat-value">1+</div>
+                            <div class="hero__stat-label">محل يثق بنا</div>
+                        </div>
+                        <div>
+                            <div class="hero__stat-value">99.9%</div>
+                            <div class="hero__stat-label">وقت التشغيل</div>
+                        </div>
+                        <div>
+                            <div class="hero__stat-value">&lt;1s</div>
+                            <div class="hero__stat-label">سرعة استجابة</div>
+                        </div>
+                    </div>
+                    <div class="hero__answers">
+                        <div class="hero__answer">
+                            <strong>في المكان الصح؟</strong>
+                            <span>للمحلات والتجزئة في مصر — مش «حل عام» بعيد عن شغلك.</span>
+                        </div>
+                        <div class="hero__answer">
+                            <strong>هيحلّ مشكلتك؟</strong>
+                            <span>كاشير + مخزون + تقارير في تدفّق واحد — أقل تشتت وأقل ورق.</span>
+                        </div>
+                        <div class="hero__answer">
+                            <strong>تقدر تثق؟</strong>
+                            <span>شفافية عن مرحلة الإطلاق، وواتساب بشري للاستفسار — من غير مبالغات.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="hero__visual">
+                    <div class="hero__mockup">
+                        <div class="hero__mockup-screen">
+                            <div class="mockup-titlebar">
+                                <div class="mockup-dot mockup-dot--red"></div>
+                                <div class="mockup-dot mockup-dot--yellow"></div>
+                                <div class="mockup-dot mockup-dot--green"></div>
+                                <span>Zovix POS — شاشة الكاشير</span>
+                            </div>
+                            <div class="mockup-body">
+                                <div class="mockup-sidebar">
+                                    <div class="sidebar-nav">
+                                        <div class="sidebar-icon active"><i class="fas fa-cash-register"></i></div>
+                                        <div class="sidebar-icon"><i class="fas fa-boxes-stacked"></i></div>
+                                        <div class="sidebar-icon"><i class="fas fa-chart-pie"></i></div>
+                                        <div class="sidebar-icon"><i class="fas fa-users"></i></div>
+                                        <div class="sidebar-icon"><i class="fas fa-gear"></i></div>
+                                    </div>
+                                    <div class="mockup-content">
+                                        <div class="mockup-top-bar">
+                                            <div class="mockup-search">
+                                                <i class="fas fa-search"></i>
+                                                بحث بالباركود أو الاسم...
+                                            </div>
+                                        </div>
+                                        <div class="mockup-products">
+                                            <div class="mockup-product">
+                                                <div class="mockup-product__img" style="background: linear-gradient(135deg, #613C9E, #C53E8F);"></div>
+                                                <div class="mockup-product__name">تيشيرت قطن</div>
+                                                <div class="mockup-product__price">350 ج.م</div>
+                                            </div>
+                                            <div class="mockup-product">
+                                                <div class="mockup-product__img" style="background: linear-gradient(135deg, #C53E8F, #F0575B);"></div>
+                                                <div class="mockup-product__name">بنطلون جينز</div>
+                                                <div class="mockup-product__price">580 ج.م</div>
+                                            </div>
+                                            <div class="mockup-product">
+                                                <div class="mockup-product__img" style="background: linear-gradient(135deg, #F0575B, #FF9F0A);"></div>
+                                                <div class="mockup-product__name">جاكيت شتوي</div>
+                                                <div class="mockup-product__price">1,200 ج.م</div>
+                                            </div>
+                                            <div class="mockup-product">
+                                                <div class="mockup-product__img" style="background: linear-gradient(135deg, #34C759, #0A84FF);"></div>
+                                                <div class="mockup-product__name">قميص كلاسيك</div>
+                                                <div class="mockup-product__price">420 ج.م</div>
+                                            </div>
+                                            <div class="mockup-product">
+                                                <div class="mockup-product__img" style="background: linear-gradient(135deg, #613C9E, #F0575B);"></div>
+                                                <div class="mockup-product__name">شورت رياضي</div>
+                                                <div class="mockup-product__price">280 ج.م</div>
+                                            </div>
+                                            <div class="mockup-product">
+                                                <div class="mockup-product__img" style="background: linear-gradient(135deg, #FF9F0A, #C53E8F);"></div>
+                                                <div class="mockup-product__name">سويتر صوف</div>
+                                                <div class="mockup-product__price">750 ج.م</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Floating badges -->
+                        <div class="hero__float hero__float--1">
+                            <div class="hero__float-icon">📊</div>
+                            <div class="hero__float-text">
+                                <h5>تقارير لحظية</h5>
+                                <p>ربحك الحقيقي في ثانية</p>
+                            </div>
+                        </div>
+                        <div class="hero__float hero__float--2">
+                            <div class="hero__float-icon">🔒</div>
+                            <div class="hero__float-text">
+                                <h5>بدون إنترنت</h5>
+                                <p>شغّال 24/7</p>
+                            </div>
+                        </div>
+                        <div class="hero__float hero__float--3">
+                            <div class="hero__float-icon">🤖</div>
+                            <div class="hero__float-text">
+                                <h5>Zovi AI</h5>
+                                <p>ذكاء اصطناعي متقدم</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════
+         TRUST BAR
+    ═══════════════════════════════════════════ -->
+    <section class="trust reveal">
+        <div class="container">
+            <div class="trust__inner">
+                <div class="trust__item">
+                    <i class="fas fa-shield-heart"></i>
+                    <span>بياناتك مشفرة ومحمية 100%</span>
+                </div>
+                <div class="trust__item">
+                    <i class="fas fa-bolt"></i>
+                    <span>سرعة فائقة — O(1) للبحث</span>
+                </div>
+                <div class="trust__item">
+                    <i class="fas fa-wifi-slash" style="-webkit-text-fill-color: var(--success);"></i>
+                    <span>Offline First — الكاشير يكمّل حتى لو النت وقع</span>
+                </div>
+                <div class="trust__item">
+                    <i class="fas fa-headset"></i>
+                    <span>دعم واتساب بشري — بشكل ودّي وبسرعة</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════
+         PAIN → BENEFIT (سياق مصري)
+    ═══════════════════════════════════════════ -->
+    <section class="pain-section" id="value">
+        <div class="container">
+            <div class="section__header reveal">
+                <div class="section__badge">
+                    <i class="fas fa-hand-holding-heart"></i>
+                    شغلك… وإحنا فاهمين
+                </div>
+                <h2 class="section__title">من <span>ضغط اليومي</span> لقرار أوضح</h2>
+                <p class="section__subtitle">
+                    نتكلم بلغة التاجر: أقل عبء معرفي، وأكتر سيطرة على محلك — من غير وعود فاضية.
+                </p>
+            </div>
+            <div class="pain-grid">
+                <div class="pain-card reveal reveal-delay-1">
+                    <div class="pain-card__label">تشتت وورق</div>
+                    <h3>دفاتر، Excel، وكاشير مش متوافقين</h3>
+                    <p class="pain-card__pain">الدماغ بيتعب لما البيانات متفرّقة — غلطات الجرد والتأخير في الكاشير بتزود التوتر قدام العميل.</p>
+                    <p class="pain-card__gain">مع Zovix: منظومة واحدة لمبيعاتك ومخزونك — <strong>تخدم أسرع</strong> وتنام مطمّن إن الأرقام متسقة.</p>
+                </div>
+                <div class="pain-card reveal reveal-delay-2">
+                    <div class="pain-card__label">انقطاع النت</div>
+                    <h3>خوف من يوم «النت وقع»</h3>
+                    <p class="pain-card__pain">في مصر، انقطاع الخدمة واقع — والعميل اللي قدامك مش هيسنّى.</p>
+                    <p class="pain-card__gain"><strong>Offline First</strong> يعني تكمّل البيع من غير ما تخسر زبون — والبرو يضيف مزامنة لما الشبكة ترجع.</p>
+                </div>
+                <div class="pain-card reveal reveal-delay-3">
+                    <div class="pain-card__label">امتثال وضرائب</div>
+                    <h3>قلق الفاتورة الإلكترونية والغرامات</h3>
+                    <p class="pain-card__pain">الالتزام الحكومي بقى جزء من يومك — غموض النظام بيخليك في حالة دفاع دائم.</p>
+                    <p class="pain-card__gain">بنشتغل على مسار يسهّل عليك الامتثال والتنظيم ضمن رحلة الإطلاق — <strong>من غير تضليل</strong>؛ التفاصيل تتوضح مع أول إصدار تجاري.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════
+         FEATURES SECTION
+    ═══════════════════════════════════════════ -->
+    <section class="section" id="features">
+        <div class="container">
+            <div class="section__header reveal">
+                <div class="section__badge">
+                    <i class="fas fa-sparkles"></i>
+                    مميزات لا مثيل لها
+                </div>
+                <h2 class="section__title">كل اللي <span>محتاجه</span> محلك — في مكان واحد</h2>
+                <p class="section__subtitle">
+                    مش بنتكلم عن «تقنياتنا» — بنتكلم عن <strong>شغلك</strong>: أقل زحمة عند الكاشير، مخزون أوضح، وتقارير تخليك تقرر بثقة من غير ما تغرق في أرقام جافة.
+                </p>
+            </div>
+
+            <div class="features__grid">
+                <div class="feature-card reveal reveal-delay-1">
+                    <div class="feature-card__icon"><i class="fas fa-cash-register"></i></div>
+                    <h3 class="feature-card__title">كاشير فائق السرعة</h3>
+                    <p class="feature-card__benefit">مما يعني إنك تخدم أكتر عميل في نفس الوقت — من غير زحمة ولا مواقف محرجة عند الكاشير.</p>
+                    <p class="feature-card__desc">واجهة POS سريعة الاستجابة بتتفاعل مع الباركود فوراً. بحث ذكي، خصومات مرنة، وتعدد طرق الدفع (نقدي - فيزا - محفظة).</p>
+                </div>
+
+                <div class="feature-card reveal reveal-delay-2">
+                    <div class="feature-card__icon"><i class="fas fa-boxes-stacked"></i></div>
+                    <h3 class="feature-card__title">مخزون متقدم</h3>
+                    <p class="feature-card__benefit">مما يعني إنك تشوف «الحقيقة» وراء الرف — ألوان ومقاسات تحت سيطرة، وأقل هدر وفقدان.</p>
+                    <p class="feature-card__desc">دعم كامل للمتغيرات المعقدة (ألوان ومقاسات) تحت نفس المنتج. مراقبة دقيقة لكميات كل فرع + نقل المخزون بين الفروع.</p>
+                </div>
+
+                <div class="feature-card reveal reveal-delay-3">
+                    <div class="feature-card__icon"><i class="fas fa-chart-line"></i></div>
+                    <h3 class="feature-card__title">تقارير وتحليلات لحظية</h3>
+                    <p class="feature-card__benefit">مما يعني إنك تقرر بسرعة — من غير ما تضيع ساعات في دفاتر أو Excel معقّد.</p>
+                    <p class="feature-card__desc">داشبورد حية بتوريك: إجمالي المبيعات، صافي الربح الحقيقي، المصروفات، أوقات الذروة، والمنتجات الأكثر والأقل مبيعاً.</p>
+                </div>
+
+                <div class="feature-card reveal reveal-delay-1">
+                    <div class="feature-card__icon"><i class="fas fa-users-gear"></i></div>
+                    <h3 class="feature-card__title">إدارة العملاء</h3>
+                    <p class="feature-card__benefit">مما يعني إنك تعرف مين يستحق اهتمامك — وتبني ولاء مش «بيعة واحدة».</p>
+                    <p class="feature-card__desc">سجّل بيانات عملائك وتابع تاريخ مشترياتهم. صنّفهم حسب الأكثر إنفاقاً واعرف مين أهم عميل عندك.</p>
+                </div>
+
+                <div class="feature-card reveal reveal-delay-2">
+                    <div class="feature-card__icon"><i class="fas fa-calendar-check"></i></div>
+                    <h3 class="feature-card__title">نظام الحجوزات والعربون</h3>
+                    <p class="feature-card__benefit">مما يعني إنك تربط بضاعتك بطلب حقيقي — من غير فوضى «مين حجز إيه؟».</p>
+                    <p class="feature-card__desc">جمّد بضاعة لعميل معين بعربون مقدم. البضاعة بتتفصل عن المخزون المتاح تلقائي لحد ما يكمّل الدفع أو يلغي.</p>
+                </div>
+
+                <div class="feature-card reveal reveal-delay-3">
+                    <div class="feature-card__icon"><i class="fas fa-undo"></i></div>
+                    <h3 class="feature-card__title">مرتجعات ذكية</h3>
+                    <p class="feature-card__benefit">مما يعني إنك تخلص الموقف قدام العميل باحتراف — من غير ما يتشوّه رصيدك أو مخزونك.</p>
+                    <p class="feature-card__desc">نظام دقيق للاسترجاع والاستبدال — المنتجات بترجع للمخزن أوتوماتيكي والحسابات بتتأثر بذكاء بدون أي تدخل يدوي.</p>
+                </div>
+
+                <div class="feature-card reveal reveal-delay-1">
+                    <div class="feature-card__icon"><i class="fas fa-cloud-arrow-up"></i></div>
+                    <h3 class="feature-card__title">نسخ احتياطي تلقائي</h3>
+                    <p class="feature-card__benefit">مما يعني إنك تنام مطمّن — بياناتك عندك في Drive بتاعك، مش «على جهاز واحد بس».</p>
+                    <p class="feature-card__desc">ربط مباشر مع Google Drive — بياناتك بتترفع مشفرة تلقائي يومياً في الخلفية لحسابك الشخصي بدون أي تدخل.</p>
+                </div>
+
+                <div class="feature-card reveal reveal-delay-2">
+                    <div class="feature-card__icon"><i class="fas fa-user-shield"></i></div>
+                    <h3 class="feature-card__title">صلاحيات دقيقة</h3>
+                    <p class="feature-card__benefit">مما يعني إنك تضبط «مين يشوف إيه» — وتقلل سرقة أو غلطات غالية.</p>
+                    <p class="feature-card__desc">نظام أذونات (مدير vs كاشير) بيمنع الكاشير من رؤية التكلفة الحقيقية أو الأرباح أو حذف الفواتير — أموالك محمية.</p>
+                </div>
+
+                <div class="feature-card reveal reveal-delay-3">
+                    <div class="feature-card__icon"><i class="fas fa-file-import"></i></div>
+                    <h3 class="feature-card__title">استيراد ذكي — Smart Import</h3>
+                    <p class="feature-card__benefit">مما يعني إنك تنتقل من نظام تاني من غير أسبوع «نسخ ولصق» مرهق.</p>
+                    <p class="feature-card__desc">محرك AI بيقرا أي ملف Excel من أي نظام تاني ويحلل الهيكل تلقائي ويطابق الحقول — انقل بياناتك في دقائق مش أيام.</p>
+                </div>
+            </div>
+
+            <div class="honest-proof reveal">
+                <p><strong>إثبات اجتماعي بشفافية:</strong> مالوش معنى نعرض شهادات منمقة مش حقيقية. لسه بنبني قاعدة عملاء — ولو حابب تكون من أوائل القصص اللي ننشرها بعد الإطلاق، <a href="https://wa.me/201037153447" target="_blank" rel="noopener noreferrer" style="color: var(--accent-light); font-weight: 800;">كلّمنا على واتساب</a>.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════
+         ZOVI AI SECTION
+    ═══════════════════════════════════════════ -->
+    <section class="ai-section section" id="ai">
+        <div class="container">
+            <div class="ai__grid">
+                <div class="ai__visual reveal">
+                    <div class="ai__brain">
+                        <div class="ai__brain-core">🧠</div>
+                        <div class="ai__brain-ring ai__brain-ring--1">
+                            <div class="ai__brain-dot"></div>
+                        </div>
+                        <div class="ai__brain-ring ai__brain-ring--2">
+                            <div class="ai__brain-dot"></div>
+                        </div>
+                        <div class="ai__brain-ring ai__brain-ring--3">
+                            <div class="ai__brain-dot"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ai__content reveal">
+                    <div class="section__badge" style="background: rgba(197,62,143,0.1); border-color: rgba(197,62,143,0.25);">
+                        <span class="ai__new-badge">NEW</span>
+                        <i class="fas fa-wand-magic-sparkles"></i>
+                        مستقبل إدارة المحلات
+                    </div>
+                    <h2 class="section__title">تعرّف على <span>Zovi AI</span></h2>
+                    <p class="section__subtitle">
+                        مش مجرد «ميزة» — <strong>Zovi AI</strong> بيحوّل أرقامك لقرارات: أقل تخمين، وأقل مخاطرة بمالك، وخطوة قدام منافسينك.
+                    </p>
+
+                    <div class="ai__features">
+                        <div class="ai__feature">
+                            <div class="ai__feature-icon">📈</div>
+                            <div class="ai__feature-text">
+                                <h4>تحليل تنبؤي للمبيعات</h4>
+                                <p>AI بيتوقعلك المبيعات القادمة بناءً على تاريخ بياناتك — اعرف إيه اللي هيتباع قبل ما يتباع.</p>
+                            </div>
+                        </div>
+                        <div class="ai__feature">
+                            <div class="ai__feature-icon">🎯</div>
+                            <div class="ai__feature-text">
+                                <h4>اكتشاف المنتجات الراكدة</h4>
+                                <p>النظام بيحددلك المنتجات اللي مش بتتحرك ويقترحلك خطط لتصريفها قبل ما تخسر.</p>
+                            </div>
+                        </div>
+                        <div class="ai__feature">
+                            <div class="ai__feature-icon">⏰</div>
+                            <div class="ai__feature-text">
+                                <h4>تحليل أوقات الذروة</h4>
+                                <p>اعرف أكتر وقت بيجيلك فيه زبائن وظبّط عدد الموظفين والعروض على أساسه.</p>
+                            </div>
+                        </div>
+                        <div class="ai__feature">
+                            <div class="ai__feature-icon">🧩</div>
+                            <div class="ai__feature-text">
+                                <h4>Smart Import — استيراد ذكي</h4>
+                                <p>اديله أي ملف Excel من أي نظام تاني وهو هيفهم الهيكل لوحده ويطابق البيانات تلقائي.</p>
+                            </div>
+                        </div>
+                        <div class="ai__feature">
+                            <div class="ai__feature-icon">💡</div>
+                            <div class="ai__feature-text">
+                                <h4>توصيات شراء ذكية</h4>
+                                <p>AI بيقولك تشتري إيه ومن إيه ومتي بناءً على حركة مخزونك الفعلية.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════
+         HOW IT WORKS
+    ═══════════════════════════════════════════ -->
+    <section class="section" id="workflow">
+        <div class="container">
+            <div class="section__header reveal">
+                <div class="section__badge">
+                    <i class="fas fa-play"></i>
+                    ابدأ في دقائق
+                </div>
+                <h2 class="section__title">إزاي <span>تبدأ</span> مع Zovix؟</h2>
+                <p class="section__subtitle">4 خطوات بسيطة وهتكون شغال — من التسجيل لأول فاتورة في أقل من 10 دقائق.</p>
+            </div>
+
+            <div class="workflow__steps">
+                <div class="workflow__step reveal reveal-delay-1">
+                    <div class="workflow__step-num">1</div>
+                    <h4>حمّل التطبيق</h4>
+                    <p>نزّل Zovix على ويندوز أو أندرويد أو لينكس</p>
+                </div>
+                <div class="workflow__step reveal reveal-delay-2">
+                    <div class="workflow__step-num">2</div>
+                    <h4>سجّل حسابك</h4>
+                    <p>اختار الباقة المناسبة وسجّل في ثواني</p>
+                </div>
+                <div class="workflow__step reveal reveal-delay-3">
+                    <div class="workflow__step-num">3</div>
+                    <h4>أضف منتجاتك</h4>
+                    <p>ادخل منتجاتك أو استوردهم من Excel في دقائق</p>
+                </div>
+                <div class="workflow__step reveal reveal-delay-4">
+                    <div class="workflow__step-num">4</div>
+                    <h4>ابدأ البيع!</h4>
+                    <p>كل حاجة جاهزة — ابدأ أول فاتورة فوراً</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════
+         OFFLINE-FIRST BANNER
+    ═══════════════════════════════════════════ -->
+    <section class="offline-banner">
+        <div class="container">
+            <div class="offline-banner__card reveal">
+                <div>
+                    <div class="section__badge">
+                        <i class="fas fa-wifi-slash"></i>
+                        Offline First
+                    </div>
+                    <h2 class="section__title">يعمل <span>بدون إنترنت</span> بالكامل</h2>
+                    <p class="section__subtitle">
+                        مش هتحتاج تقلق لو النت وقع. Zovix مصمم من الأول يشتغل بدون إنترنت بسرعة كاملة — وأول ما النت يرجع، كل حاجة بتتزامن تلقائي.
+                    </p>
+                    <div class="offline-banner__points">
+                        <div class="offline-banner__point">
+                            <i class="fas fa-check"></i>
+                            <span>الكاشير شغال 24/7 حتى لو مفيش إنترنت</span>
+                        </div>
+                        <div class="offline-banner__point">
+                            <i class="fas fa-check"></i>
+                            <span>مزامنة سحابية تلقائية لما النت يرجع</span>
+                        </div>
+                        <div class="offline-banner__point">
+                            <i class="fas fa-check"></i>
+                            <span>بياناتك مخزنة محلياً بسرعة فائقة</span>
+                        </div>
+                        <div class="offline-banner__point">
+                            <i class="fas fa-check"></i>
+                            <span>لا تأخير ولا انتظار — كل حاجة فورية</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="offline-visual">
+                    <div class="offline-visual__icon">
+                        <i class="fas fa-shield-halved"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════
+         PLATFORMS SECTION
+    ═══════════════════════════════════════════ -->
+    <section class="section" id="platforms">
+        <div class="container">
+            <div class="section__header reveal">
+                <div class="section__badge">
+                    <i class="fas fa-laptop-code"></i>
+                    متعدد المنصات
+                </div>
+                <h2 class="section__title">شغّال على <span>كل الأنظمة</span></h2>
+                <p class="section__subtitle">Zovix مبني بتقنية Flutter — هيتوفر على ويندوز وأندرويد ولينكس بعد الإطلاق الرسمي.</p>
+            </div>
+
+            <div class="platforms__grid">
+                <div class="platform-card reveal reveal-delay-1">
+                    <div class="platform-card__icon"><i class="fab fa-windows"></i></div>
+                    <h3 class="platform-card__name">Windows</h3>
+                    <p class="platform-card__desc">التطبيق الأساسي لسطح المكتب — مثالي للكاشير والإدارة. أداء محلي فائق السرعة.</p>
+                    <div class="platform-card__status" style="color: var(--warning);">
+                        <i class="fas fa-clock"></i> قريباً مع الإطلاق
+                    </div>
+                </div>
+
+                <div class="platform-card reveal reveal-delay-2">
+                    <div class="platform-card__icon"><i class="fab fa-android"></i></div>
+                    <h3 class="platform-card__name">Android</h3>
+                    <p class="platform-card__desc">تابع مبيعاتك ومخزونك من التابلت أو الموبايل. مثالي للتنقل بين الفروع.</p>
+                    <div class="platform-card__status" style="color: var(--warning);">
+                        <i class="fas fa-clock"></i> قريباً مع الإطلاق
+                    </div>
+                </div>
+
+                <div class="platform-card reveal reveal-delay-3">
+                    <div class="platform-card__icon"><i class="fab fa-linux"></i></div>
+                    <h3 class="platform-card__name">Linux</h3>
+                    <p class="platform-card__desc">لمحبي الأنظمة المفتوحة — Zovix بيشتغل على Ubuntu و الأنظمة المبنية على Debian.</p>
+                    <div class="platform-card__status" style="color: var(--warning);">
+                        <i class="fas fa-clock"></i> قريباً مع الإطلاق
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════
+         STATS SECTION
+    ═══════════════════════════════════════════ -->
+    <section class="stats-section">
+        <div class="container">
+            <div class="stats__grid">
+                <div class="stat-card reveal reveal-delay-1">
+                    <div class="stat-card__number stat-card__number--static">0+</div>
+                    <div class="stat-card__label">محل يستخدم Zovix</div>
+                </div>
+                <div class="stat-card reveal reveal-delay-2">
+                    <div class="stat-card__number stat-card__number--static">+0</div>
+                    <div class="stat-card__label">فاتورة شهرياً</div>
+                </div>
+                <div class="stat-card reveal reveal-delay-3">
+                    <div class="stat-card__number">99.9%</div>
+                    <div class="stat-card__label">نسبة الاعتمادية</div>
+                </div>
+                <div class="stat-card reveal reveal-delay-4">
+                    <div class="stat-card__number">24/7</div>
+                    <div class="stat-card__label">يعمل بدون توقف</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════
+         PRICING SECTION
+    ═══════════════════════════════════════════ -->
+    <section class="section pricing" id="pricing">
+        <div class="container">
+            <div class="section__header reveal">
+                <div class="section__badge">
+                    <i class="fas fa-tags"></i>
+                    سعر إطلاق محدود 🔥
+                </div>
+                <h2 class="section__title">باقات <span>أسعار الإطلاق</span></h2>
+                <p class="section__subtitle">
+                    باقة تجربة مجانية للتعرف على النظام، وبيزك لمحلك الأوفلاين، وبرو للسحابة والذكاء — اختار اللي يناسبك قبل الإطلاق الرسمي.
+                </p>
+                <p class="pricing__hint reveal">البرو في المنتصف لأنه غالباً «أقل قرار معرفي»: فرق سعر محدود مقابل مزامنة وDrive وZovi AI — فتاخد راحة التوسع من غير ما ترجع تبدأ من الصفر.</p>
+            </div>
+
+            <div class="pricing__launch-notice reveal">
+                <div class="pricing__launch-tag">
+                    <i class="fas fa-rocket"></i>
+                    الإصدار التجاري لسه منطلقش — الأسعار دي للحجز المبكر ومش هتفضل للأبد!
+                </div>
+            </div>
+
+            <div class="pricing__grid">
+                <!-- FREE TRIAL -->
+                <div class="pricing-card pricing-card--free reveal reveal-delay-1">
+                    <span class="pricing-card__trial-tag">تجربة فقط</span>
+                    <div class="pricing-card__name">Free — باقة مجانية</div>
+                    <p class="pricing-card__desc">للتجربة والتعرف على Zovix — حدود صارمة. تعمل أونلاين أو أوفلاين (مش زي البيزك اللي أوفلاين فقط).</p>
+
+                    <div class="pricing-card__price">
+                        <div>
+                            <span class="pricing-card__currency">ج.م</span>
+                            <span class="pricing-card__amount">0</span>
+                        </div>
+                        <div class="pricing-card__period">مجاناً — غير متجددة كباقة مدفوعة</div>
+                    </div>
+
+                    <div class="pricing-card__features">
+                        <div class="pricing-card__feature">
+                            <i class="fas fa-check"></i>
+                            <span>فرع واحد</span>
+                        </div>
+                        <div class="pricing-card__feature">
+                            <i class="fas fa-check"></i>
+                            <span>جهازين</span>
+                        </div>
+                        <div class="pricing-card__feature">
+                            <i class="fas fa-check"></i>
+                            <span>مستخدمين: <strong>مدير + كاشير</strong></span>
+                        </div>
+                        <div class="pricing-card__feature">
+                            <i class="fas fa-check"></i>
+                            <span><strong>10 منتجات</strong> كحد أقصى</span>
+                        </div>
+                        <div class="pricing-card__feature">
+                            <i class="fas fa-check"></i>
+                            <span><strong>30 فاتورة</strong> كحد أقصى</span>
+                        </div>
+                        <div class="pricing-card__feature">
+                            <i class="fas fa-check"></i>
+                            <span><strong>5 حجوزات</strong> كحد أقصى</span>
+                        </div>
+                        <div class="pricing-card__feature">
+                            <i class="fas fa-check"></i>
+                            <span>نفس <strong>جوهر</strong> مميزات البيزك (كاشير، مخزون، تقارير، عملاء…) ضمن الحدود دي</span>
+                        </div>
+                        <div class="pricing-card__feature">
+                            <i class="fas fa-check"></i>
+                            <span style="color: var(--success); font-weight: 700;">أونلاين + أوفلاين</span>
+                        </div>
+                        <div class="pricing-card__feature pricing-card__feature--disabled">
+                            <i class="fas fa-xmark"></i>
+                            <span>مزامنة سحابية / Google Drive / Zovi AI</span>
+                        </div>
+                    </div>
+
+                    <a href="https://wa.me/201037153447?text=%D8%A3%D8%B1%D9%8A%D8%AF%20%D8%A7%D9%84%D8%AA%D8%B3%D8%AC%D9%8A%D9%84%20%D9%81%D9%8A%20%D8%A8%D8%A7%D9%82%D8%A9%20%D8%A7%D9%84%D8%AA%D8%AC%D8%B1%D8%A8%D8%A9%20%D8%A7%D9%84%D9%85%D8%AC%D8%A7%D9%86%D9%8A%D8%A9" target="_blank" rel="noopener noreferrer" class="btn btn--ghost" style="width: 100%; justify-content: center;">
+                        <i class="fab fa-whatsapp"></i>
+                        سجّل اهتمامك بالتجربة
+                    </a>
+                </div>
+
+                <!-- PRO PLAN (center — most sold) -->
+                <div class="pricing-card pricing-card--popular reveal reveal-delay-2">
+                    <div class="pricing-card__popular-tag">الأكثر مبيعاً</div>
+                    <div class="pricing-card__name">Pro — باقة برو</div>
+                    <p class="pricing-card__desc">للمحلات اللي عايزة السحابة، المزامنة بين الأجهزة، والذكاء — الأعلى قيمة.</p>
+
+                    <div class="pricing-card__price">
+                        <div>
+                            <span class="pricing-card__currency">ج.م</span>
+                            <span class="pricing-card__amount">800</span>
+                        </div>
+                        <div class="pricing-card__period">شهرياً / سعر إطلاق محدود</div>
+                    </div>
+
+                    <div class="pricing-card__features">
+                        <div class="pricing-card__feature">
+                            <i class="fas fa-check"></i>
+                            <span style="color: var(--success); font-weight: 700;">أونلاين + Offline First</span>
+                        </div>
+                        <div class="pricing-card__feature">
+                            <i class="fas fa-check"></i>
+                            <span>فرع واحد + <strong>3 أجهزة</strong> لكل فرع</span>
+                        </div>
+                        <div class="pricing-card__feature">
+                            <i class="fas fa-check"></i>
+                            <span>كل مميزات <strong>البيزك</strong> (بدون حدود التجربة المجانية)</span>
+                        </div>
+                        <div class="pricing-card__feature">
+                            <i class="fas fa-check"></i>
+                            <span style="color: var(--accent-light); font-weight: 700;">Google Drive + نسخ احتياطي تلقائي</span>
+                        </div>
+                        <div class="pricing-card__feature">
+                            <i class="fas fa-check"></i>
+                            <span>مزامنة سحابية فورية بين الأجهزة والفروع الإضافية</span>
+                        </div>
+                        <div class="pricing-card__feature">
+                            <i class="fas fa-check"></i>
+                            <span>تخصيص لوجو المحل على الفواتير</span>
+                        </div>
+                        <div class="pricing-card__feature">
+                            <i class="fas fa-check"></i>
+                            <span>Smart Import — استيراد ذكي من Excel</span>
+                        </div>
+                        <div class="pricing-card__feature">
+                            <i class="fas fa-check"></i>
+                            <span style="color: var(--highlight); font-weight: 700;">Zovi AI — تحليل وتنبؤات</span>
+                        </div>
+                        <div class="pricing-card__feature">
+                            <i class="fas fa-check"></i>
+                            <span>تنبيهات وإشعارات ذكية + أولوية دعم فني</span>
+                        </div>
+                    </div>
+
+                    <a href="https://wa.me/201037153447?text=%D8%A3%D8%B1%D9%8A%D8%AF%20%D8%A8%D8%A7%D9%82%D8%A9%20%D8%A7%D9%84%D8%A8%D8%B1%D9%88%20Pro" target="_blank" rel="noopener noreferrer" class="btn btn--primary" style="width: 100%; justify-content: center;">
+                        <i class="fas fa-crown"></i>
+                        احجز باقة البرو
+                    </a>
+                </div>
+
+                <!-- BASIC PLAN -->
+                <div class="pricing-card reveal reveal-delay-3">
+                    <div class="pricing-card__name">Basic — باقة بيزك</div>
+                    <p class="pricing-card__desc">محل واحد بجهاز واحد — شغل محلي قوي بدون سحابة. <strong>أوفلاين فقط</strong> (مش زي التجربة المجانية).</p>
+
+                    <div class="pricing-card__price">
+                        <div>
+                            <span class="pricing-card__currency">ج.م</span>
+                            <span class="pricing-card__amount">500</span>
+                        </div>
+                        <div class="pricing-card__period">شهرياً / سعر إطلاق محدود</div>
+                    </div>
+
+                    <div class="pricing-card__features">
+                        <div class="pricing-card__feature">
+                            <i class="fas fa-check"></i>
+                            <span style="color: var(--warning); font-weight: 700;">أوفلاين فقط — بدون مزامنة سحابية</span>
+                        </div>
+                        <div class="pricing-card__feature">
+                            <i class="fas fa-check"></i>
+                            <span>جهاز واحد + فرع واحد</span>
+                        </div>
+                        <div class="pricing-card__feature">
+                            <i class="fas fa-check"></i>
+                            <span>كاشير سريع + باركود + طرق دفع متعددة</span>
+                        </div>
+                        <div class="pricing-card__feature">
+                            <i class="fas fa-check"></i>
+                            <span>مخزون كامل (ألوان + مقاسات) — بدون سقف التجربة</span>
+                        </div>
+                        <div class="pricing-card__feature">
+                            <i class="fas fa-check"></i>
+                            <span>عملاء + حجوزات وعربون — بدون سقف التجربة</span>
+                        </div>
+                        <div class="pricing-card__feature">
+                            <i class="fas fa-check"></i>
+                            <span>تقارير ومبيعات لحظية + مرتجعات وصلاحيات</span>
+                        </div>
+                        <div class="pricing-card__feature">
+                            <i class="fas fa-check"></i>
+                            <span>تخزين محلي كامل على جهازك</span>
+                        </div>
+                        <div class="pricing-card__feature pricing-card__feature--disabled">
+                            <i class="fas fa-xmark"></i>
+                            <span>Google Drive / مزامنة بين أجهزة / Smart Import</span>
+                        </div>
+                        <div class="pricing-card__feature pricing-card__feature--disabled">
+                            <i class="fas fa-xmark"></i>
+                            <span>تخصيص لوجو على الفواتير / Zovi AI</span>
+                        </div>
+                    </div>
+
+                    <a href="https://wa.me/201037153447?text=%D8%A3%D8%B1%D9%8A%D8%AF%20%D8%A8%D8%A7%D9%82%D8%A9%20%D8%A7%D9%84%D8%A8%D9%8A%D8%B2%D9%83%20Basic" target="_blank" rel="noopener noreferrer" class="btn btn--outline" style="width: 100%; justify-content: center;">
+                        احجز باقة البيزك
+                    </a>
+                </div>
+            </div>
+
+            <!-- Extra Branch Info -->
+            <div class="pricing__extra reveal">
+                <div class="pricing__extra-title">
+                    <i class="fas fa-building"></i>
+                    عندك أكتر من فرع؟
+                </div>
+                <p class="pricing__extra-desc">
+                    كل فرع إضافي بـ <span class="pricing__extra-highlight">560 جنيه شهرياً</span> فقط — ومعاه <span class="pricing__extra-highlight">3 أجهزة إضافية</span> للفرع الجديد!
+                    <br>
+                    يعني لو عندك <strong>فرعين</strong> → تقدر تفتح حسابك من <span class="pricing__extra-highlight">6 أجهزة</span> (3 لكل فرع).
+                    <br>
+                    لو عندك <strong>3 فروع</strong> → <span class="pricing__extra-highlight">9 أجهزة</span>! وهكذا بلا حدود.
+                    <br><br>
+                    <span style="font-size: 13px; color: var(--text-muted);">ينطبق على <strong>باقة البرو</strong> والفروع الإضافية المرتبطة بها — المزامنة بين الفروع مع السحابة.</span>
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════
+         FAQ SECTION
+    ═══════════════════════════════════════════ -->
+    <section class="section" id="faq">
+        <div class="container">
+            <div class="section__header reveal">
+                <div class="section__badge">
+                    <i class="fas fa-circle-question"></i>
+                    أسئلة شائعة
+                </div>
+                <h2 class="section__title">كل اللي <span>عايز تعرفه</span></h2>
+                <p class="section__subtitle">إجابات على أكتر الأسئلة اللي بتوصلنا من العملاء.</p>
+            </div>
+
+            <div class="faq__grid">
+                <div class="faq-item reveal">
+                    <div class="faq-item__q" onclick="toggleFaq(this)">
+                        <span>هل Zovix بيشتغل بدون إنترنت فعلاً؟</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-item__a">
+                        <p>أيوه — Zovix مصمم Offline-First: الكاشير والبيانات الأساسية تقدر تشتغل من غير ما تتوقف لو النت ضعيف أو واقف. <strong>باقة البيزك</strong> شغالة <strong>أوفلاين فقط</strong> من غير مزامنة سحابية. <strong>باقة التجربة المجانية</strong> تقدر تستخدمها أونلاين أو أوفلاين ضمن حدود التجربة. <strong>البرو</strong> يضيف مزامنة سحابية لما الإنترنت يرجع.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item reveal">
+                    <div class="faq-item__q" onclick="toggleFaq(this)">
+                        <span>هل البرنامج متاح للتحميل دلوقتي؟</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-item__a">
+                        <p><strong>لسه لا.</strong> الإصدار التجاري لسه منطلقش — الصفحة دي للتعريف بالمميزات والباقات والحجز المبكر. لما نفتح التحميل هنعلن عنه هنا وعلى واتساب.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item reveal">
+                    <div class="faq-item__q" onclick="toggleFaq(this)">
+                        <span>إيه باقة التجربة المجانية؟</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-item__a">
+                        <p>باقة <strong>مجانية للتجربة فقط</strong> بحدود واضحة: فرع واحد، جهازين، مدير + كاشير، حتى 10 منتجات و30 فاتورة و5 حجوزات. نفس روح مميزات البيزك ضمن الحدود دي، وتقدر تستخدمها <strong>أونلاين أو أوفلاين</strong> — عكس البيزك اللي أوفلاين فقط. مفيش مزامنة سحابية ولا Zovi AI.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item reveal">
+                    <div class="faq-item__q" onclick="toggleFaq(this)">
+                        <span>هل Zovix بيساعد في الفاتورة الإلكترونية ومصلحة الضرائب؟</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-item__a">
+                        <p>ده بالذات محور بنشتغل عليه بهدوء: الهدف إن الامتثال يبقى <strong>منظم ومش متعب نفسياً</strong> ضمن دورة البيع — من غير وعود مبالغ فيها قبل ما نثبت التكامل رسمياً. مع الإصدار التجاري هنوضّح خطوة بخطوة إيه المتاح وإيه اللي محتاج إعداد من عندك.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item reveal">
+                    <div class="faq-item__q" onclick="toggleFaq(this)">
+                        <span>أقدر أنقل بياناتي من نظام تاني؟</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-item__a">
+                        <p>في <strong>باقة البرو</strong>، ميزة Smart Import بتقرا أي ملف Excel من أي نظام تاني وبتفهم الهيكل تلقائي — من غير قالب ثابت. لما الإطلاق يكون جاهز، هنكمّل معاك الاستيراد في دقائق.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item reveal">
+                    <div class="faq-item__q" onclick="toggleFaq(this)">
+                        <span>إيه الفرق بين التجربة المجانية والبيزك والبرو؟</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-item__a">
+                        <p>الباقة <strong>المجانية</strong> للتجربة بحدود (منتجات وفواتير وحجوزات) وتدعم أونلاين أو أوفلاين. <strong>البيزك</strong> جهاز واحد وفرع واحد، شغل محلي قوي <strong>أوفلاين فقط</strong> من غير Drive ولا مزامنة. <strong>البرو</strong> يضيف 3 أجهزة لكل فرع، أونلاين + أوفلاين، Drive، مزامنة، Smart Import، وZovi AI.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item reveal">
+                    <div class="faq-item__q" onclick="toggleFaq(this)">
+                        <span>بياناتي آمنة؟</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-item__a">
+                        <p>بياناتك مشفرة بالكامل سواء محلياً أو على السحابة. النسخ الاحتياطي التلقائي بيتم على حساب Google Drive الشخصي بتاعك — مفيش حد تاني بيقدر يوصلها. وكمان نظام الصلاحيات بيمنع أي وصول غير مصرح بيه.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item reveal">
+                    <div class="faq-item__q" onclick="toggleFaq(this)">
+                        <span>هل سعر الإطلاق ده هيفضل كده؟</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-item__a">
+                        <p>لا! الأسعار دي سعر إطلاق محدود لفترة محدودة جداً. لما نوصل لعدد معين من المشتركين، الأسعار هتزيد. اللي يشترك دلوقتي هيفضل على السعر القديم طول ما اشتراكه مستمر.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item reveal">
+                    <div class="faq-item__q" onclick="toggleFaq(this)">
+                        <span>إزاي أضيف فرع جديد؟</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-item__a">
+                        <p>بسيطة مع <strong>باقة البرو</strong>! كل فرع إضافي بـ 560 جنيه شهرياً ومعاه 3 أجهزة إضافية. يعني لو عندك فرعين، تقدر تشتغل من 6 أجهزة. الفروع بتتزامن مع بعض تلقائي على السحابة.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════
+         CTA SECTION
+    ═══════════════════════════════════════════ -->
+    <section class="cta-section">
+        <div class="container">
+            <div class="cta-section__card reveal">
+                <h2 class="cta-section__title">جاهز تنقل محلك <span style="background: var(--gradient); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">للمستقبل</span>؟</h2>
+                <p class="cta-section__subtitle">الإصدار التجاري لسه منطلقش — سجّل اهتمامك بسعر الإطلاق المحدود من خلال واتساب، وخليك أول واحد يشغّل لما نفتح التحميل.</p>
+                <div class="cta-section__buttons">
+                    <a href="#pricing" class="btn btn--primary btn--lg">
+                        <i class="fas fa-rocket"></i>
+                        شوف الباقات
+                    </a>
+                    <a href="https://wa.me/201037153447" target="_blank" rel="noopener noreferrer" class="btn btn--outline btn--lg">
+                        <i class="fab fa-whatsapp"></i>
+                        تواصل واتساب
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════
+         FOOTER
+    ═══════════════════════════════════════════ -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer__grid">
+                <div class="footer__brand">
+                    <a href="#" class="header__logo" style="margin-bottom: 0;">
+                        <img src="540.png" alt="Zovix POS" style="width: 36px; height: 36px; border-radius: 10px;">
+                        <span class="header__logo-text" style="font-size: 22px;">ZOVIX</span>
+                    </a>
+                    <p class="footer__brand-desc">
+                        نظام نقاط البيع الذكي الأول من نوعه — مصمم لمحلات الملابس والتجزئة في مصر والوطن العربي. يعمل بدون إنترنت مع قوة الذكاء الاصطناعي.
+                    </p>
+                    <div class="footer__socials">
+                        <a href="#" class="footer__social" aria-label="فيسبوك"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="footer__social" aria-label="إنستغرام"><i class="fab fa-instagram"></i></a>
+                        <a href="https://wa.me/201037153447" target="_blank" rel="noopener noreferrer" class="footer__social" aria-label="واتساب"><i class="fab fa-whatsapp"></i></a>
+                        <a href="#" class="footer__social" aria-label="يوتيوب"><i class="fab fa-youtube"></i></a>
+                    </div>
+                    <p style="margin-top: 16px; font-size: 14px; color: var(--text-secondary);">
+                        <a href="tel:+201037153447" style="color: var(--accent-light); font-weight: 700;">01037153447</a>
+                        <span style="color: var(--text-muted); font-size: 12px; display: block; margin-top: 6px;">واتساب متاح للاستفسار السريع</span>
+                    </p>
+                </div>
+
+                <div class="footer__col">
+                    <h4>روابط سريعة</h4>
+                    <a href="#features">المميزات</a>
+                    <a href="#value">ليه Zovix؟</a>
+                    <a href="#ai">Zovi AI</a>
+                    <a href="#platforms">الأنظمة</a>
+                    <a href="#pricing">الأسعار</a>
+                </div>
+
+                <div class="footer__col">
+                    <h4>الدعم</h4>
+                    <a href="#faq">أسئلة شائعة</a>
+                    <a href="#">الشروط والأحكام</a>
+                    <a href="#">سياسة الخصوصية</a>
+                    <a href="https://wa.me/201037153447" target="_blank" rel="noopener noreferrer">تواصل معانا</a>
+                </div>
+
+                <div class="footer__col">
+                    <h4>التحميل</h4>
+                    <a href="#"><i class="fab fa-windows" style="margin-left: 6px;"></i> Windows</a>
+                    <a href="#"><i class="fab fa-android" style="margin-left: 6px;"></i> Android</a>
+                    <a href="#"><i class="fab fa-linux" style="margin-left: 6px;"></i> Linux</a>
+                </div>
+            </div>
+
+            <div class="footer__bottom">
+                <span>© 2026 Zovix. جميع الحقوق محفوظة.</span>
+                <span>صُنع بـ 💜 في مصر</span>
+            </div>
+        </div>
+    </footer>
+
+    <a href="https://wa.me/201037153447" class="whatsapp-float" target="_blank" rel="noopener noreferrer" aria-label="تواصل عبر واتساب بسرعة">
+        <i class="fab fa-whatsapp" aria-hidden="true"></i>
+    </a>
+
+    <!-- ═══════════════════════════════════════════
+         SCRIPTS
+    ═══════════════════════════════════════════ -->
+    <script>
+        // ── Header scroll effect ──
+        const header = document.getElementById('header');
+        window.addEventListener('scroll', () => {
+            header.classList.toggle('scrolled', window.scrollY > 60);
+        });
+
+        // ── Mobile Nav ──
+        const menuToggle = document.getElementById('menuToggle');
+        const mobileNav = document.getElementById('mobileNav');
+        const mobileNavClose = document.getElementById('mobileNavClose');
+
+        menuToggle.addEventListener('click', () => mobileNav.classList.add('open'));
+        mobileNavClose.addEventListener('click', () => mobileNav.classList.remove('open'));
+
+        function closeMobileNav() {
+            mobileNav.classList.remove('open');
+        }
+
+        // ── Scroll Reveal ──
+        const revealElements = document.querySelectorAll('.reveal');
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    revealObserver.unobserve(entry.target);
+                }
+            });
+        }, {
+            threshold: 0.15,
+            rootMargin: '0px 0px -40px 0px'
+        });
+
+        revealElements.forEach(el => revealObserver.observe(el));
+
+        // ── FAQ Toggle ──
+        function toggleFaq(element) {
+            const faqItem = element.parentElement;
+            const isActive = faqItem.classList.contains('active');
+
+            // Close all
+            document.querySelectorAll('.faq-item').forEach(item => {
+                item.classList.remove('active');
+            });
+
+            // Toggle clicked
+            if (!isActive) {
+                faqItem.classList.add('active');
+            }
+        }
+
+        // ── Smooth scroll for anchor links ──
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                const href = this.getAttribute('href');
+                if (href === '#') return;
+                e.preventDefault();
+                const target = document.querySelector(href);
+                if (target) {
+                    const offset = 80;
+                    const pos = target.getBoundingClientRect().top + window.scrollY - offset;
+                    window.scrollTo({ top: pos, behavior: 'smooth' });
+                }
+            });
+        });
+
+        // ── Animated counter ──
+        function animateCounters() {
+            const counters = document.querySelectorAll('.stat-card__number');
+            counters.forEach(counter => {
+                if (counter.classList.contains('stat-card__number--static')) return;
+
+                const text = counter.textContent;
+                if (text.includes('K') || text.includes('%') || text.includes('/') || text.includes('+')) return;
+
+                const target = parseInt(text, 10);
+                if (isNaN(target) || target === 0) return;
+
+                let current = 0;
+                const increment = target / 60;
+                const timer = setInterval(() => {
+                    current += increment;
+                    if (current >= target) {
+                        counter.textContent = target + '+';
+                        clearInterval(timer);
+                    } else {
+                        counter.textContent = Math.floor(current) + '+';
+                    }
+                }, 25);
+            });
+        }
+
+        const statsSection = document.querySelector('.stats-section');
+        const statsObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    animateCounters();
+                    statsObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        if (statsSection) statsObserver.observe(statsSection);
+
+        // ── Parallax on orbs ──
+        window.addEventListener('mousemove', (e) => {
+            const x = (e.clientX / window.innerWidth - 0.5) * 20;
+            const y = (e.clientY / window.innerHeight - 0.5) * 20;
+            document.querySelectorAll('.bg-orb').forEach((orb, i) => {
+                const factor = (i + 1) * 0.5;
+                orb.style.transform = `translate(${x * factor}px, ${y * factor}px)`;
+            });
+        });
+    </script>
+</body>
+</html>
